@@ -1,30 +1,32 @@
 import mongoose from 'mongoose';
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/meshk';
+const MONGODB_URI = process.env.MONGODB_URI as string;
 
 if (!MONGODB_URI) {
   throw new Error('Please define the MONGODB_URI environment variable inside .env.local');
 }
 
 /**
- * Global is used here to maintain a cached connection across hot reloads
- * in development. This prevents connections growing exponentially
- * during API Route usage.
+ * Global caching to prevent multiple connections in development.
  */
-interface GlobalWithMongoose extends typeof globalThis {
-  mongoose: {
-    conn: mongoose.Connection | null;
-    promise: Promise<mongoose.Connection> | null;
-  };
+interface MongooseCache {
+  conn: mongoose.Connection | null;
+  promise: Promise<mongoose.Connection> | null;
 }
 
-let cached = (global as unknown as GlobalWithMongoose).mongoose;
+// globalThis এর টাইপ ডিক্লেয়ারেশন
+declare global {
+  // eslint-disable-next-line no-var
+  var mongoose: MongooseCache;
+}
+
+let cached = global.mongoose;
 
 if (!cached) {
-  cached = (global as unknown as GlobalWithMongoose).mongoose = { conn: null, promise: null };
+  cached = global.mongoose = { conn: null, promise: null };
 }
 
-async function connectDB() {
+async function dbConnect() {
   if (cached.conn) {
     return cached.conn;
   }
@@ -49,4 +51,4 @@ async function connectDB() {
   return cached.conn;
 }
 
-export default connectDB;
+export default dbConnect;
