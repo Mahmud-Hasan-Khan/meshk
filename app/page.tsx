@@ -1,9 +1,5 @@
-'use client';
-
-import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { motion, AnimatePresence } from 'framer-motion';
 import {
   BookOpen, Heart, Users, GraduationCap,
   ArrowRight, ShieldCheck, Star, ChevronLeft, ChevronRight
@@ -39,21 +35,7 @@ export default function Home() {
     }
   ];
 
-  const [currentSlide, setCurrentSlide] = useState(0);
-
-  const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % slides.length);
-  };
-
-  const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
-  };
-
-  useEffect(() => {
-    const timer = setInterval(nextSlide, 8000);
-    return () => clearInterval(timer);
-  }, []);
-
+  
   const subjects = [
     { title: 'Aqaid', description: 'Understanding the fundamentals of Islamic faith.', icon: ShieldCheck, color: 'text-emerald-600' },
     { title: 'Fiqh', description: 'Learning the practical rules of Islamic jurisprudence.', icon: BookOpen, color: 'text-emerald-600' },
